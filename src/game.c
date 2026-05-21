@@ -1,4 +1,11 @@
 #include "raylib.h"
+#include "utils.h"
+
+
+
+float min(float a, float b) {
+	return ((a < b) * a) + ((a >= b) * b);
+}
 
 
 int worldWidth;
@@ -31,10 +38,17 @@ void EndTextureRendering() {
 	BeginDrawing();
 	ClearBackground(BLACK);
 
+
+	float scaleFactor = min((float)windowHeight / worldHeight, (float) windowWidth / worldWidth);
+
+	float renderWidth = renderTexture.texture.width * scaleFactor;
+	float renderHeight = renderTexture.texture.height * scaleFactor;
+
+
 	DrawTexturePro(renderTexture.texture,
 		(Rectangle){ 0, 0, (float)renderTexture.texture.width, (float)-renderTexture.texture.height },
-		(Rectangle){ windowWidth / 2.0, windowHeight / 2.0, renderTexture.texture.width, renderTexture.texture.height },
-		(Vector2){ renderTexture.texture.width / 2.0 , renderTexture.texture.height / 2.0 }, 0, WHITE);
+		(Rectangle){ windowWidth / 2.0, windowHeight / 2.0, renderWidth, renderHeight },
+		(Vector2){ renderWidth / 2.0 , renderHeight / 2.0 }, 0, WHITE);
 	EndDrawing();
 
 
@@ -98,7 +112,7 @@ int main(void)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
-
+	int peam = 1000;
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -120,6 +134,10 @@ int main(void)
 		}
 		if (IsKeyDown(KEY_D)) {
 			SwitchResolution(0, 0, true);
+		}
+		if (IsKeyDown(KEY_F)) {
+			SwitchResolution(800, peam, false);
+			peam--;
 		}
 
 
