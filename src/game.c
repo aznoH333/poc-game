@@ -1,9 +1,11 @@
 #include "raylib.h"
 
+
 int worldWidth;
 int worldHeight;
 int windowWidth;
 int windowHeight;
+bool toggleFullscreen = false;
 RenderTexture2D renderTexture;
 // Initializes a new window. Wraps a few raylib functions to handle screen scaling.
 void InitTextureWindow(int newWindowWidth, int newWindowHeight, int newWorldWidth, int newWorldHeight, char* windowTitle) {
@@ -29,14 +31,19 @@ void EndTextureRendering() {
 	BeginDrawing();
 	ClearBackground(BLACK);
 
-	float worldRatio = worldWidth / worldHeight;
-	float renderScale = worldWidth / windowWidth;
-		
 	DrawTexturePro(renderTexture.texture,
 		(Rectangle){ 0, 0, (float)renderTexture.texture.width, (float)-renderTexture.texture.height },
-		(Rectangle){ windowWidth / 2.0, windowHeight / 2.0, worldWidth * renderScale, worldHeight * renderScale },
-		(Vector2){ renderTexture.texture.width/2.0f, renderTexture.texture.height/2.0f }, 0, WHITE);
+		(Rectangle){ windowWidth / 2.0, windowHeight / 2.0, renderTexture.texture.width, renderTexture.texture.height },
+		(Vector2){ renderTexture.texture.width / 2.0 , renderTexture.texture.height / 2.0 }, 0, WHITE);
 	EndDrawing();
+
+
+	// This nonsense is here to make sure that wayland updates the window properly after toggling fullscreen
+	if (toggleFullscreen) {
+		toggleFullscreen = false;
+		SetWindowSize(1,1);
+		SetWindowSize(windowWidth, windowHeight);
+	}
 }
 
 // changes the current window resolution
@@ -57,13 +64,19 @@ void SwitchResolution(int width, int height, bool fullscreen) {
 		return; // exit early if resolution is the same
 	}
 
+
+	printf("changing resolution from [%d, %d] to [%d, %d]\n", windowWidth, windowHeight, targetResolutionWidth, targetResolutionHeight);
 	SetWindowSize(targetResolutionWidth, targetResolutionHeight);
 	windowWidth = targetResolutionWidth;
 	windowHeight = targetResolutionHeight;
 
+
 	if ((fullscreen && !IsWindowFullscreen()) || !fullscreen && IsWindowFullscreen()) {
 		ToggleFullscreen();
+		SetWindowSize(targetResolutionWidth, targetResolutionHeight);
+		toggleFullscreen = true;	
 	}
+
 }
 
 
@@ -77,7 +90,7 @@ int main(void)
     // Initialization
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenHeight = 400;
 
     // InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
@@ -98,6 +111,7 @@ int main(void)
         //----------------------------------------------------------------------------------
         //BeginDrawing();
 
+
 		if (IsKeyDown(KEY_A)) {
 			SwitchResolution(200, 200, false);
 		}
@@ -109,13 +123,14 @@ int main(void)
 		}
 
 
-
 		BeginTextureRendering();
 
 		ClearBackground(BLUE);
         DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
 
+
 		EndTextureRendering();
+
 
         //EndDrawing();
         //----------------------------------------------------------------------------------
