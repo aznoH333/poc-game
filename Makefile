@@ -13,8 +13,8 @@ PKG_CONFIG_FLAGS := $(shell pkg-config --libs --cflags raylib)
 
 ifeq ($(MACOS),1)
   CC := cc
-  CFLAGS += $(PKG_CONFIG_FLAGS)
-  LDFLAGS :=
+  CFLAGS := $(PKG_CONFIG_FLAGS)  
+  LDFLAGS := $(PKG_CONFIG_FLAGS)
 endif
 
 .PHONY: run_all all mac run clean
@@ -26,7 +26,7 @@ run_all:
 	$(MAKE) clean
 
 # convenience: make mac -> build for macOS
-mac:
+mac:	
 	@$(MAKE) MACOS=1
 
 all: $(TARGET)
