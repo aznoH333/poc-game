@@ -55,8 +55,12 @@ void InitTextureWindow(int newWindowWidth, int newWindowHeight, int newWorldWidt
 void BeginTextureRendering();
 void EndTextureRendering();
 
-// changes the current window resolution
-// if fullscreen is true changes to monitor resolution instead and switches fullscreen on
+// Changes the current window resolution
+// If fullscreen is true changes to monitor resolution instead and switches fullscreen on
 void SwitchResolution(int width, int height, bool fullscreen);
+// Loads a shader into memory and sets it as active. If you want to use the default shader just pass 0 instead of vertexPath or fragmentPath.
+void UseShader(char* vertexPath, char* fragmentPath);
+
+
 
 #endif

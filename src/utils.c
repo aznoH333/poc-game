@@ -65,6 +65,8 @@ RenderTexture2D renderTexture;
 float scaleFactor;
 float renderWidth;
 float renderHeight;
+Shader shader;
+
 void recalculateRenderingValues() {
 
 	scaleFactor = min((float)windowHeight / worldHeight, (float) windowWidth / worldWidth);
@@ -86,6 +88,8 @@ void InitTextureWindow(int newWindowWidth, int newWindowHeight, int newWorldWidt
 
 
 	recalculateRenderingValues();
+
+	shader = LoadShader(0, 0);
 }
 
 
@@ -98,15 +102,17 @@ void EndTextureRendering() {
 
 	// render to screen
 	BeginDrawing();
+	
 	ClearBackground(BLACK);
-
-
-
+	BeginShaderMode(shader);
 
 	DrawTexturePro(renderTexture.texture,
 		(Rectangle){ 0, 0, (float)renderTexture.texture.width, (float)-renderTexture.texture.height },
 		(Rectangle){ windowWidth / 2.0, windowHeight / 2.0, renderWidth, renderHeight },
 		(Vector2){ renderWidth / 2.0 , renderHeight / 2.0 }, 0, WHITE);
+	
+	EndShaderMode();
+
 	EndDrawing();
 
 
@@ -145,10 +151,19 @@ void SwitchResolution(int width, int height, bool fullscreen) {
 	windowHeight = targetResolutionHeight;
 	recalculateRenderingValues();
 
-	if ((fullscreen && !IsWindowFullscreen()) || !fullscreen && IsWindowFullscreen()) {
+	if ((fullscreen && !IsWindowFullscreen()) || (!fullscreen && IsWindowFullscreen())) {
 		ToggleFullscreen();
 		SetWindowSize(targetResolutionWidth, targetResolutionHeight);
 		toggleFullscreen = true;	
 	}
 
 }
+
+
+void UseShader(char* vertexPath, char* fragmentPath){
+	
+	printf("Using shader [vertex : %s] [fragment : %s]\n", vertexPath, fragmentPath);	
+	shader = LoadShader(vertexPath, fragmentPath);
+
+}
+

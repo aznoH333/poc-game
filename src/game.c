@@ -7,15 +7,17 @@
 
 int main(void)
 {
-    // Initialization
+    
+
+	//SetTraceLogLevel(LOG_WARNING); 
+	// Initialization
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 400;
 
-    // InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
-	InitTextureWindow(screenWidth, screenHeight, 600, 400, "window test");
-
+	InitTextureWindow(screenWidth, screenHeight, 256, 224, "window test");	
+	UseShader("./resources/shaderVert.vs", "./resources/shaderFrag.fs");
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 	int peam = 1000;
