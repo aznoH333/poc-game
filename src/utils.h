@@ -4,6 +4,7 @@
 #include "dirent.h"
 #include "stddef.h"
 #include "stdio.h"
+#include "raylib.h"
 
 // -------------------------------------------------------------------------------------
 // ArrayHandle
@@ -35,5 +36,27 @@ unsigned int hashString(char* name);
 // File utils
 // -------------------------------------------------------------------------------------
 void doForEachFileInFolder(char* directoryPath, void (*func)(int, struct dirent*)); 
+
+
+// -------------------------------------------------------------------------------------
+// Math
+// -------------------------------------------------------------------------------------
+float min(float a, float b);
+float max(float a, float b);
+
+
+
+// -------------------------------------------------------------------------------------
+// Rendering
+// -------------------------------------------------------------------------------------
+
+// Initializes a new window. Wraps a few raylib functions to handle screen scaling.
+void InitTextureWindow(int newWindowWidth, int newWindowHeight, int newWorldWidth, int newWorldHeight, char* windowTitle);
+void BeginTextureRendering();
+void EndTextureRendering();
+
+// changes the current window resolution
+// if fullscreen is true changes to monitor resolution instead and switches fullscreen on
+void SwitchResolution(int width, int height, bool fullscreen);
 
 #endif
