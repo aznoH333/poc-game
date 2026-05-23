@@ -44,7 +44,7 @@ void doForEachFileInFolder(char* directoryPath, void (*func)(int, struct dirent*
 // -------------------------------------------------------------------------------------
 float min(float a, float b);
 float max(float a, float b);
-
+float boolToSign(bool input);
 
 
 // -------------------------------------------------------------------------------------
@@ -53,8 +53,8 @@ float max(float a, float b);
 
 // Initializes a new window. Wraps a few raylib functions to handle screen scaling.
 void InitTextureWindow(int newWindowWidth, int newWindowHeight, int newWorldWidth, int newWorldHeight, char* windowTitle);
-void BeginTextureRendering();
-void EndTextureRendering();
+// Renders all the qued sprites to the screen
+void Render();
 
 // Changes the current window resolution
 // If fullscreen is true changes to monitor resolution instead and switches fullscreen on
@@ -62,6 +62,11 @@ void SwitchResolution(int width, int height, bool fullscreen);
 // Loads a shader into memory and sets it as active. If you want to use the default shader just pass 0 instead of vertexPath or fragmentPath.
 void UseShader(char* vertexPath, char* fragmentPath);
 
-
+// -------------------------------------------------------------------------------------
+// Texture drawing
+// -------------------------------------------------------------------------------------
+void sprMain(char* spriteName, float x, float y, float width, float height, bool flipX, bool flipY, float rotation, Color color, int layer);
+void spr(char* spriteName, float x, float y, int layer);
+void sprFRC(char* spriteName, float x, float y, bool flipX, bool flipY, float rotation, Color color, int layer);
 
 #endif
