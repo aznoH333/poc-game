@@ -164,8 +164,6 @@ GenArrayDefinition(DrawArguments, MAX_TEXTURES_PER_LAYER,DrawArgumentArray)
 DrawArgumentArray drawQueue[MAX_TEXTURE_LAYERS] = {0};
 
 
-
-
 void sprMain(char* spriteName, float x, float y, float width, float height, bool flipX, bool flipY, float rotation, Color color, int layer) {
 	DrawArgumentArray* target = &drawQueue[layer];
 	
@@ -190,6 +188,33 @@ void spr(char* spriteName, float x, float y, int layer) {
 
 void sprFRC(char* spriteName, float x, float y, bool flipX, bool flipY, float rotation, Color color, int layer) {
 	sprMain(spriteName, x, y, 1.0f, 1.0f, flipX, flipY, rotation, color, layer);
+}
+
+
+
+// -------------------------------------------------------------------------------------
+// Text
+// -------------------------------------------------------------------------------------
+typedef struct {
+	const char *text; 
+	int posX; 
+	int posY;
+	int fontSize;
+	Color color;
+} TextArguments;
+
+#define MAX_TEXT_DRAWS_PER_FRAME 64
+GenArrayDefinition(TextArguments, MAX_TEXT_DRAWS_PER_FRAME, TextArgumentsArray);
+TextArgumentsArray textQueue = {0};
+
+void drawText(char* text, float x, float y, float size, Color color){
+	ArrayPush(textQueue, ((TextArguments){
+		text,
+		x,
+		y,
+		size,
+		color
+	}));
 }
 
 // -------------------------------------------------------------------------------------
@@ -239,6 +264,8 @@ void Render() {
 	// render to texture
 	BeginTextureMode(renderTexture);
 	ClearBackground(BLACK);	
+	
+	// draw queued sprites
 	for (int layerIndex = 0; layerIndex < MAX_TEXTURE_LAYERS; layerIndex++) {
 		DrawArgumentArray* layer = &drawQueue[layerIndex];
 		for (unsigned int i = 0; i < layer->count; i++) {
@@ -250,6 +277,16 @@ void Render() {
 
 		layer->count = 0;
 	}
+	
+	// render text
+	for (unsigned int i = 0; i < textQueue.count; i++) {
+		TextArguments* args = &ArrayGet(textQueue, i);
+
+		DrawText(args->text, args->posX, args->posY, args->fontSize, args->color);
+	}
+
+	textQueue.count = 0;
+
 
 	EndTextureMode();
 

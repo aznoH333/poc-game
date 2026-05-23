@@ -32,7 +32,7 @@ int main(void)
 		sprMain("debug_0003", 100, 26, 2, 1, false, false, 3.14f, WHITE, 0);
 		spr("debug_0002", 70, 40, 0);
 		sprFRC("debug_0002", 200, 100, true, false, 1.67f, WHITE, 0);
-
+		drawText("penis", 100, 100, 10, WHITE);
 		Render();
 
     }

@@ -70,6 +70,10 @@ void spr(char* spriteName, float x, float y, int layer);
 void sprFRC(char* spriteName, float x, float y, bool flipX, bool flipY, float rotation, Color color, int layer);
 
 
+// -------------------------------------------------------------------------------------
+// Text
+// -------------------------------------------------------------------------------------
+void drawText(char* text, float x, float y, float size, Color color);
 
 // -------------------------------------------------------------------------------------
 // Audio
