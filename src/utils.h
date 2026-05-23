@@ -69,4 +69,11 @@ void sprMain(char* spriteName, float x, float y, float width, float height, bool
 void spr(char* spriteName, float x, float y, int layer);
 void sprFRC(char* spriteName, float x, float y, bool flipX, bool flipY, float rotation, Color color, int layer);
 
+
+
+// -------------------------------------------------------------------------------------
+// Audio
+// -------------------------------------------------------------------------------------
+void playSound(char* soundName, float pitch, float volume);
+
 #endif

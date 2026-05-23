@@ -18,6 +18,10 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose())
 	{
+		
+		if (IsKeyPressed(KEY_SPACE)) {
+			playSound("debug", 1.0f, 1.0f);	
+		}
 
 		if (IsKeyDown(KEY_L)) {
 			SwitchResolution(0, 0, true);

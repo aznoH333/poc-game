@@ -61,7 +61,9 @@ float boolToSign(bool input) {
 // Asset loading
 //------------------------------------------------------------------------------------
 GenHashmapDefinition(Texture2D, TextureMap) 
+GenHashmapDefinition(Sound, SoundMap)
 TextureMap textures = {0};
+SoundMap sounds = {0};
 
 void loadSprite(int index, struct dirent* entry) {
 	if (index < 2) {
@@ -81,17 +83,54 @@ void loadSprite(int index, struct dirent* entry) {
 	printf("Loading sprite [%s] from path [%s] \n", identifier, texturePath);
 
 	HashMapPut(textures, identifier, LoadTexture(texturePath)); 
+}
 
+void loadSound(int index, struct dirent* entry) {
+	if (index < 2) {
+		return;
+	}
+	
+	// build texture path
+	char texturePath[500];	
+	snprintf(texturePath, 500, "./resources/sounds/%s", entry->d_name);
+		
+	// build identifier
+	char identifier[500];
+	int copyLength = strlen(entry->d_name)-4;
+	strncpy(identifier, entry->d_name, 255);
+	identifier[copyLength] = 0;
+
+	printf("Loading sound [%s] from path [%s] \n", identifier, texturePath);
+
+	HashMapPut(sounds, identifier, LoadSound(texturePath)); 
 }
 
 void loadAssets() {
 	doForEachFileInFolder("./resources/textures/", &loadSprite);
 
+	doForEachFileInFolder("./resources/sounds/", &loadSound);
 }
 
 
 Texture2D* getSprite(char* spriteName) {
 	return &HashMapGet(textures, spriteName);
+}
+
+Sound* getSound(char* soundName) {
+	return &HashMapGet(sounds, soundName);
+}
+
+// -------------------------------------------------------------------------------------
+// Audio
+// -------------------------------------------------------------------------------------
+void playSound(char* soundName, float pitch, float volume) {
+	Sound* sound = getSound(soundName);
+
+	SetSoundVolume(*sound, volume);
+    SetSoundPitch(*sound, pitch); 
+
+	PlaySound(*sound);
+	
 }
 
 // -------------------------------------------------------------------------------------
@@ -181,9 +220,10 @@ void InitTextureWindow(int newWindowWidth, int newWindowHeight, int newWorldWidt
 	worldHeight = newWorldHeight;
 	windowWidth = newWindowWidth;
 	windowHeight = newWindowHeight;
-
-	InitWindow(windowWidth, windowHeight, windowTitle);
 	
+	InitWindow(windowWidth, windowHeight, windowTitle);
+	InitAudioDevice();
+
 	renderTexture = LoadRenderTexture(worldWidth, worldHeight);
 
 
