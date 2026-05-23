@@ -69,13 +69,13 @@ void loadSprite(int index, struct dirent* entry) {
 	}
 	
 	// build texture path
-	char texturePath[128];	
-	snprintf(texturePath, 128, "./resources/textures/%s", entry->d_name);
+	char texturePath[500];	
+	snprintf(texturePath, 500, "./resources/textures/%s", entry->d_name);
 		
 	// build identifier
-	char identifier[128];
+	char identifier[500];
 	int copyLength = strlen(entry->d_name)-4;
-	strncpy(identifier, entry->d_name, copyLength);
+	strncpy(identifier, entry->d_name, 255);
 	identifier[copyLength] = 0;
 
 	printf("Loading sprite [%s] from path [%s] \n", identifier, texturePath);
@@ -201,7 +201,7 @@ void Render() {
 	ClearBackground(BLACK);	
 	for (int layerIndex = 0; layerIndex < MAX_TEXTURE_LAYERS; layerIndex++) {
 		DrawArgumentArray* layer = &drawQueue[layerIndex];
-		for (int i = 0; i < layer->count; i++) {
+		for (unsigned int i = 0; i < layer->count; i++) {
 			DrawArguments* args = &ArrayGet((*layer), i);
 
 			drawSpriteFromArguments(args);
