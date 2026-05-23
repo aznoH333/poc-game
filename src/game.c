@@ -45,6 +45,11 @@ Texture2D* getSprite(char* spriteName) {
 //------------------------------------------------------------------------------------
 // Sprite drawing
 //------------------------------------------------------------------------------------
+
+float boolToSign(bool input) {
+	return (input * 2) - 1;
+}
+
 #define MAX_TEXTURE_LAYERS 8
 #define MAX_TEXTURES_PER_LAYER 1024
 
@@ -74,20 +79,32 @@ GenArrayDefinition(DrawArguments, MAX_TEXTURES_PER_LAYER,DrawArgumentArray)
 DrawArgumentArray drawQueue[MAX_TEXTURE_LAYERS] = {0};
 
 
-void spr(char* spriteName, float x, float y, float width, float height, bool flipX, bool flipY, int layer) {
+
+
+void sprMain(char* spriteName, float x, float y, float width, float height, bool flipX, bool flipY, float rotation, Color color, int layer) {
 	DrawArgumentArray* target = &drawQueue[layer];
 	
 	Texture2D* texture = getSprite(spriteName); 
 
 	DrawArguments args = {
 		texture, 
-		(Rectangle){0, 0, texture->width * -1, texture->height}, 
+		(Rectangle){0, 0, texture->width * boolToSign(!flipX), texture->height * boolToSign(!flipY)}, 
 		(Rectangle){x, y, texture->width * width, texture->height * height},
 		(Vector2) {texture->width / 2.0f * width, texture->height / 2.0f * height},
-		0.0f, WHITE
+		rotation / PI * 180, 
+		color
 	};
 
 	ArrayPush((*target), args);
+}
+
+
+void spr(char* spriteName, float x, float y, int layer) {
+	sprMain(spriteName, x, y, 1.0f, 1.0f, false, false, 0.0f, WHITE, layer);
+}
+
+void sprFRC(char* spriteName, float x, float y, bool flipX, bool flipY, float rotation, Color color, int layer) {
+	sprMain(spriteName, x, y, 1.0f, 1.0f, flipX, flipY, rotation, color, layer);
 }
 
 void renderTextures() {
@@ -120,7 +137,6 @@ int main(void)
 	UseShader("./resources/shaders/shaderVert.vs", "./resources/shaders/shaderFrag.fs");
     SetTargetFPS(60);
 
-	int poo = 0;
     // Main game loop
     while (!WindowShouldClose())
 	{
@@ -137,8 +153,10 @@ int main(void)
 			SwitchResolution(0, 0, true);
 		}
 
-		spr("debug_0001", 100, 10, 2, 1, false, false, 0);
-		spr("debug_0001", 100, 26, 2, 1, true, false, 0);
+		sprMain("debug_0003", 100, 10, 2, 1, false, false, 0.0f, WHITE, 0);
+		sprMain("debug_0003", 100, 26, 2, 1, false, false, 3.14f, WHITE, 0);
+		spr("debug_0002", 70, 40, 0);
+		sprFRC("debug_0002", 200, 100, true, false, 1.67f, WHITE, 0);
 		BeginTextureRendering();
 
 		ClearBackground(BLUE);
