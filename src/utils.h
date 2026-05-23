@@ -16,7 +16,7 @@
 
 #define ArrayNew(arrayStructName) (arrayStructName) {.elements = {0}, .count = 0 }
 #define ArrayPush(array, element) array.elements[array.count++] = element
-
+#define ArrayGet(array, index) array.elements[index]
 
 // -------------------------------------------------------------------------------------
 // Hashmap
@@ -35,6 +35,7 @@ unsigned int hashString(char* name);
 // -------------------------------------------------------------------------------------
 // File utils
 // -------------------------------------------------------------------------------------
+// Calls (func) for each file in a directory. The first parameter of (func) is the index of the file inside the folder, the second is a reference to that directory entry
 void doForEachFileInFolder(char* directoryPath, void (*func)(int, struct dirent*)); 
 
 

@@ -11,7 +11,7 @@ unsigned int hashString(char* name) {
 	int i = 0;
 
 	while (name[i]) {
-		output *= name[i] + name[i-1 + (i == 0)];
+		output += name[i] * name[i-1 + (i == 0)];
 		++i;
 	}
 
@@ -28,7 +28,7 @@ void doForEachFileInFolder(char* directoryPath, void (*func)(int, struct dirent*
 	DIR* dir = opendir(directoryPath);
 
 	if (dir == NULL) {
-		printf("Could not open requested directory [%s]", directoryPath);
+		printf("Could not open requested directory [%s]\n", directoryPath);
 		return;
 	}
 	
