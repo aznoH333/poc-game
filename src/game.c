@@ -15,12 +15,15 @@ int main(void)
 	UseShader("./resources/shaders/shaderVert.vs", "./resources/shaders/shaderFrag.fs");
     SetTargetFPS(60);
 	float poo = 0.0f;
-    // Main game loop
+
+	// Main game loop
     while (!WindowShouldClose())
 	{
 		
 		if (IsKeyPressed(KEY_SPACE)) {
 			playSound("debug", 1.0f, 1.0f);	
+			
+			playMusic("1", 1.0f);	
 		}
 
 		if (IsKeyDown(KEY_L)) {
@@ -32,7 +35,7 @@ int main(void)
 		sprMain("debug_0003", 100, 26, 2, 1, false, false, 3.14f, WHITE, 0);
 		spr("debug_0002", 70, 40, 0);
 		sprFRC("debug_0002", 200, 100, true, false, 1.67f, WHITE, 0);
-		drawText("penis", 100, 100, 10, WHITE);
+		drawText("penis", 100, 100, 1, WHITE);
 		Render();
 
     }

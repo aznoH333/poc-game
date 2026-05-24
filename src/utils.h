@@ -35,8 +35,8 @@ unsigned int hashString(char* name);
 // -------------------------------------------------------------------------------------
 // File utils
 // -------------------------------------------------------------------------------------
-// Calls (func) for each file in a directory. The first parameter of (func) is the index of the file inside the folder, the second is a reference to that directory entry
-void doForEachFileInFolder(char* directoryPath, void (*func)(int, struct dirent*)); 
+// Calls (func) for each file in a directory. The first parameter of (func) is the current directory path the second is the index of the file inside the folder, the third is a reference to that directory entry
+void doForEachFileInFolder(char* directoryPath, void (*func)(char*, int, struct dirent*)); 
 
 
 // -------------------------------------------------------------------------------------
@@ -79,5 +79,7 @@ void drawText(char* text, float x, float y, float size, Color color);
 // Audio
 // -------------------------------------------------------------------------------------
 void playSound(char* soundName, float pitch, float volume);
+void playMusic(char* trackName, float volume);
+void stopMusic();
 
 #endif

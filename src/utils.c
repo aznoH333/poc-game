@@ -22,7 +22,7 @@ unsigned int hashString(char* name) {
 // -------------------------------------------------------------------------------------
 // File utils
 // -------------------------------------------------------------------------------------
-void doForEachFileInFolder(char* directoryPath, void (*func)(int, struct dirent*)) {
+void doForEachFileInFolder(char* directoryPath, void (*func)(char* directoryPath, int, struct dirent*)) {
 	struct dirent* directoryEntry;
 
 	DIR* dir = opendir(directoryPath);
@@ -34,12 +34,23 @@ void doForEachFileInFolder(char* directoryPath, void (*func)(int, struct dirent*
 	
 
 	for (int i = 0; (directoryEntry = readdir(dir)) != NULL; i++) {
-		func(i, directoryEntry);
+		func(directoryPath, i, directoryEntry);
 	}
 
 	closedir(dir);
 }
 
+void getFullFilePathAndName(char* directoryPath, char* fullPathTarget, char* nameTarget, struct dirent* entry) {
+
+	// build texture path
+	snprintf(fullPathTarget, 500, "%s%s", directoryPath, entry->d_name);
+		
+	// build identifier
+	int copyLength = strlen(entry->d_name)-4;
+	strncpy(nameTarget, entry->d_name, 255);
+	nameTarget[copyLength] = 0;
+
+}
 
 // -------------------------------------------------------------------------------------
 // Math
@@ -62,53 +73,63 @@ float boolToSign(bool input) {
 //------------------------------------------------------------------------------------
 GenHashmapDefinition(Texture2D, TextureMap) 
 GenHashmapDefinition(Sound, SoundMap)
+GenHashmapDefinition(Music, MusicMap)
 TextureMap textures = {0};
 SoundMap sounds = {0};
+MusicMap music = {0};
 
-void loadSprite(int index, struct dirent* entry) {
+
+// TODO : THIS IS COPY PASTED GARGBAGE
+// Maybe get rid of the do for each file function and just process these sequentialy
+void loadSprite(char* directoryPath, int index, struct dirent* entry) {
 	if (index < 2) {
 		return;
 	}
 	
-	// build texture path
-	char texturePath[500];	
-	snprintf(texturePath, 500, "./resources/textures/%s", entry->d_name);
-		
-	// build identifier
+	char fullPath[500];	
 	char identifier[500];
-	int copyLength = strlen(entry->d_name)-4;
-	strncpy(identifier, entry->d_name, 255);
-	identifier[copyLength] = 0;
+	
+	getFullFilePathAndName(directoryPath, fullPath, identifier, entry);
 
-	printf("Loading sprite [%s] from path [%s] \n", identifier, texturePath);
+	printf("Loading sprite [%s] from path [%s] \n", identifier, fullPath);
 
-	HashMapPut(textures, identifier, LoadTexture(texturePath)); 
+	HashMapPut(textures, identifier, LoadTexture(fullPath)); 
 }
 
-void loadSound(int index, struct dirent* entry) {
+void loadSound(char* directoryPath, int index, struct dirent* entry) {
 	if (index < 2) {
 		return;
 	}
 	
-	// build texture path
-	char texturePath[500];	
-	snprintf(texturePath, 500, "./resources/sounds/%s", entry->d_name);
-		
-	// build identifier
+	char fullPath[500];	
 	char identifier[500];
-	int copyLength = strlen(entry->d_name)-4;
-	strncpy(identifier, entry->d_name, 255);
-	identifier[copyLength] = 0;
+	
+	getFullFilePathAndName(directoryPath, fullPath, identifier, entry);
 
-	printf("Loading sound [%s] from path [%s] \n", identifier, texturePath);
+	printf("Loading sound [%s] from path [%s] \n", identifier, fullPath);
 
-	HashMapPut(sounds, identifier, LoadSound(texturePath)); 
+	HashMapPut(sounds, identifier, LoadSound(fullPath)); 
+}
+
+void loadMusic(char* directoryPath, int index, struct dirent* entry) {
+	if (index < 2) {
+		return;
+	}
+	
+	char fullPath[500];	
+	char identifier[500];
+	
+	getFullFilePathAndName(directoryPath, fullPath, identifier, entry);
+
+	printf("Loading music [%s] from path [%s] \n", identifier, fullPath);
+
+	HashMapPut(music, identifier, LoadMusicStream(fullPath)); 
 }
 
 void loadAssets() {
 	doForEachFileInFolder("./resources/textures/", &loadSprite);
-
 	doForEachFileInFolder("./resources/sounds/", &loadSound);
+	doForEachFileInFolder("./resources/music/", &loadMusic);
 }
 
 
@@ -118,6 +139,10 @@ Texture2D* getSprite(char* spriteName) {
 
 Sound* getSound(char* soundName) {
 	return &HashMapGet(sounds, soundName);
+}
+
+Music* getMusic(char* trackName) {
+	return &HashMapGet(music, trackName);
 }
 
 // -------------------------------------------------------------------------------------
@@ -132,6 +157,36 @@ void playSound(char* soundName, float pitch, float volume) {
 	PlaySound(*sound);
 	
 }
+
+
+// -------------------------------------------------------------------------------------
+// Music
+// -------------------------------------------------------------------------------------
+Music* currentMusic = 0;
+
+void playMusic(char* trackName, float volume) {
+	printf("Playing music %s. Volume %f\n", trackName, volume);
+
+	Music* track = getMusic(trackName);
+
+	SetMusicVolume(*track, volume);
+	SeekMusicStream(*track, 0);
+	PlayMusicStream(*track);
+	currentMusic = track;
+
+}
+
+
+void stopMusic() {
+	if (currentMusic == 0) {
+		return;
+	}
+
+	StopMusicStream(*currentMusic);
+
+	currentMusic = 0;
+}
+
 
 // -------------------------------------------------------------------------------------
 // Texture drawing
@@ -304,7 +359,11 @@ void Render() {
 	EndShaderMode();
 
 	EndDrawing();
-
+	
+	// update music
+	if (currentMusic != 0) {
+		UpdateMusicStream(*currentMusic);
+	}
 
 	// This nonsense is here to make sure that wayland updates the window properly after toggling fullscreen
 	if (toggleFullscreen) {
