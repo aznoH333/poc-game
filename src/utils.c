@@ -285,13 +285,22 @@ float scaleFactor;
 float renderWidth;
 float renderHeight;
 Shader shader;
+float gutterXWidth;
+float gutterYHeight;
+
 
 void recalculateRenderingValues() {
+	
+	float xRatio = (float) windowWidth / worldWidth;
+	float yRatio = (float) windowHeight / worldHeight;
 
-	scaleFactor = min((float)windowHeight / worldHeight, (float) windowWidth / worldWidth);
+	scaleFactor = min(yRatio, xRatio);
 	renderWidth = renderTexture.texture.width * scaleFactor;
 	renderHeight = renderTexture.texture.height * scaleFactor;
 	
+	gutterXWidth = (windowWidth - renderWidth) / 2.0f;
+	gutterYHeight = (windowHeight - renderHeight) / 2.0f;
+
 }
 
 // Initializes a new window. Wraps a few raylib functions to handle screen scaling.
@@ -415,3 +424,16 @@ void UseShader(char* vertexPath, char* fragmentPath){
 	shader = LoadShader(vertexPath, fragmentPath);
 
 }
+
+
+// -------------------------------------------------------------------------------------
+// Input
+// -------------------------------------------------------------------------------------
+Vector2 getMousePosition() {
+	int x = GetMouseX();
+	int y = GetMouseY();
+
+
+	return (Vector2){(x - gutterXWidth) / scaleFactor, (y - gutterYHeight) / scaleFactor};	
+}
+

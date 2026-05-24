@@ -82,4 +82,11 @@ void playSound(char* soundName, float pitch, float volume);
 void playMusic(char* trackName, float volume);
 void stopMusic();
 
+
+// -------------------------------------------------------------------------------------
+// Input
+// -------------------------------------------------------------------------------------
+Vector2 getMousePosition();
+
+
 #endif
